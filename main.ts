@@ -3,13 +3,43 @@ enum ActionKind {
     Idle,
     Jumping
 }
+controller.up.onEvent(ControllerButtonEvent.Pressed, function () {
+    boomguysprite.setVelocity(0, -200)
+})
+controller.A.onEvent(ControllerButtonEvent.Pressed, function () {
+    projectile = sprites.createProjectileFromSprite(img`
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . 4 . . . . . . . . 
+        . . . . . . 4 . . . . . . . . . 
+        . . . . . . . 4 . . . . . . . . 
+        . . . . . . f f . . . . . . . . 
+        . . . . . f f f f . . . . . . . 
+        . . . . f f f f f f . . . . . . 
+        . . . . f f f f f f . . . . . . 
+        . . . . . f f f f . . . . . . . 
+        . . . . . . f f . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . . . . 
+        `, boomguysprite, 200, 0)
+})
 controller.left.onEvent(ControllerButtonEvent.Pressed, function () {
-    boomguysprite.setVelocity(-100, 0)
+    boomguysprite.setVelocity(-200, 0)
 })
 controller.right.onEvent(ControllerButtonEvent.Pressed, function () {
-    boomguysprite.setVelocity(100, 0)
+    boomguysprite.setVelocity(200, 0)
+})
+controller.down.onEvent(ControllerButtonEvent.Pressed, function () {
+    boomguysprite.setVelocity(0, 200)
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
+    boomguysprite.destroy(effects.fire, 500)
 })
 let good_and_bad: Sprite = null
+let projectile: Sprite = null
 let boomguysprite: Sprite = null
 info.startCountdown(120)
 scene.setBackgroundImage(img`
@@ -223,18 +253,18 @@ boomguy.addAnimationFrame(img`
     `)
 animation.attachAnimation(boomguysprite, boomguy)
 animation.setAction(boomguysprite, ActionKind.Walking)
-game.onUpdateInterval(1000, function () {
+game.onUpdateInterval(2000, function () {
     good_and_bad = sprites.create(img`
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
-        . . . . . . f d f . . . . . . . 
-        . . . . . 8 d d d 8 . . . . . . 
-        . . . . . 8 8 8 8 8 . . . . . . 
-        . . . . . . 8 8 8 . . . . . . . 
-        . . . . . . 8 . 8 . . . . . . . 
+        . . . . . . f 1 f . . . . . . . 
+        . . . . . f 1 1 1 f . . . . . . 
+        . . . . . f f f f f . . . . . . 
+        . . . . . . f f f . . . . . . . 
+        . . . . . . f . f . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
         . . . . . . . . . . . . . . . . 
@@ -243,6 +273,6 @@ game.onUpdateInterval(1000, function () {
         . . . . . . . . . . . . . . . . 
         `, SpriteKind.Enemy)
     good_and_bad.x = randint(0, 10)
-    good_and_bad.y = randint(0, 10)
+    good_and_bad.y = randint(0, scene.screenHeight())
     good_and_bad.follow(boomguysprite, 100)
 })
